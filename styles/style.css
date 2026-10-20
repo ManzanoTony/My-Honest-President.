@@ -1,0 +1,10 @@
+#main-game-screen, #winning-screen, #loosing-screen {
+    display: none;
+}
+
+#game-box {
+  position: relative; 
+  width: 100%;        
+  height: 600px;      
+  background-color: turquoise; 
+}
