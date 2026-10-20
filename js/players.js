@@ -5,8 +5,9 @@ class Player {
     gameBoxNode.append(this.node);
     this.node.className = "player";
 
-    // position and dimension
-    this.x = 70;
+    // POSITION AND DIMENSION
+
+    this.x = 10;
     this.y = 515;
     this.width = 50;
     this.height = 80;
@@ -17,19 +18,22 @@ class Player {
     this.node.style.border = "solid yellow 2px";
     this.node.style.borderRadius = "5px";
 
-    // initial position
+    // INITIAL POSITIONS
 
     this.node.style.position = "absolute";
     this.node.style.top = `${this.y}px`;
     this.node.style.left = `${this.x}px`;
-    this.speed = 150
+    this.speed = 150;
   }
 
-  
-  // methods:
+  // METHODS
 
   moveUp() {
-    this.y -= this.speed;
+    this.y -= 2;
+    this.node.style.top = `${this.y}px`;
+  }
+  moveDown() {
+    this.y += 2;
     this.node.style.top = `${this.y}px`;
   }
 }
