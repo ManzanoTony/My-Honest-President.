@@ -8,3 +8,20 @@
   height: 600px;      
   background-color: turquoise; 
 }
+
+#timer-display {
+  font-size: 24px;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+
+.money-bullet {
+  position: absolute;
+  width: 25px;
+  height: 15px;
+  background-color: green;
+  border-radius: 3px;
+}
