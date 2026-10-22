@@ -1,27 +1,121 @@
-#main-game-screen, #winning-screen, #loosing-screen {
-    display: none;
+/* ==========================================
+   1. GLOBAL & PAGE LAYOUT
+   ========================================== */
+body {
+  background-color: green;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden; /* Prevents accidental scrollbars */
 }
 
+/* ==========================================
+   2. SCREEN MANAGEMENT & CENTERING
+   ========================================== */
+#winning-screen, #loosing-screen {
+  display: none;
+  text-align: center;
+  color: #ffffff;
+}
+
+#main-game-screen {
+  display: none; /* JS toggles this to 'flex' when game starts */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* ==========================================
+   3. GAME BOX & SLIDING BACKGROUND
+   ========================================== */
 #game-box {
   position: relative; 
-  width: 100%;        
-  height: 600px;      
-  background-color: turquoise; 
+  width: 1120px;        
+  height: 630px;      
+  overflow: hidden; 
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  background-color: #87ceeb;
 }
 
+#city-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  width: max-content;
+  animation: slideCity 60s linear infinite; /* Changed from 40s to 60s (try 80s if you want it even slower) */
+  z-index: 1;
+}
+
+
+#city-slider img {
+  height: 100%; 
+  width: auto;  
+  display: block;
+}
+
+/* Infinite loop animation */
+@keyframes slideCity {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%); /* Slides past first image; second image loops seamlessly */
+  }
+}
+
+/* ==========================================
+   4. HUD DISPLAY ELEMENTS
+   ========================================== */
 #timer-display {
-  font-size: 24px;
+  position: absolute;
+  top: 15px;
+  right: 25px; 
+  font-size: 26px;
   font-weight: bold;
-  color: black;
-  margin-bottom: 10px;
-  text-align: center;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  z-index: 20;
 }
 
+#lives-display {
+  position: absolute;
+  top: 15px;
+  left: 25px; 
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  z-index: 20;
+}
 
+/* ==========================================
+   5. GAME ENTITIES (BULLETS, PLAYER, ENEMIES)
+   ========================================== */
 .money-bullet {
   position: absolute;
-  width: 25px;
-  height: 15px;
-  background-color: green;
+  width: 28px;
+  height: 16px;
+  background-color: #ffd700; 
+  border: 2px solid #006600;  
   border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); 
+  z-index: 15;
+}
+
+.player, .enemy {
+  position: absolute;
+  z-index: 15; /* Renders in front of the background slider */
 }

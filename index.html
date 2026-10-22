@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Hone$t Pre$ident</title>
-    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
     <div id="start-screen">
-      <h1>My Hone$t Pre$ident</h1> 
+      <h1>My Hone$t Pre$ident</h1>
 
       <p>
         Make true or false promises to your citizens so you can get the most
@@ -52,37 +52,40 @@
         </div>
       </div>
     </div>
+
     <!-- Main game screen -->
-
     <div id="main-game-screen">
-      <div id="timer-display">Time: 02:00</div>
-      <div id="game-box"></div>
+      <div id="game-box">
+        <!-- Seamless Sliding Background -->
+        <div id="city-slider">
+          <img src="images/city-background.png" alt="City Background" />
+          <img src="images/city-background.png" alt="City Background" />
+        </div>
 
+        <!-- HUD Display Elements -->
+        <div id="timer-display">Time: 02:00</div>
+        <div id="lives-display">Lives: 💵 💵 💵</div>
+      </div>
     </div>
 
     <!-- Winning screen -->
-
     <div id="winning-screen">
       <h2>Your promises were believed! You are now a billionaire!</h2>
       <div id="restart-game1">
         <button id="try-again1">Try Again</button>
       </div>
     </div>
-    
-    <!-- Loosing screen -->
 
+    <!-- Losing screen -->
     <div id="loosing-screen">
       <h2>Your promises were not believed—you are going to jail!</h2>
-
       <div id="restart-game2">
         <button id="try-again2">Try Again</button>
       </div>
     </div>
 
-
-    <script src="./js/main.js"></script>
     <script src="./js/players.js"></script>
     <script src="./js/enemies.js"></script>
-    
+    <script src="./js/main.js"></script>
   </body>
 </html>

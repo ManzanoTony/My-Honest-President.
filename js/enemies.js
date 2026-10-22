@@ -8,11 +8,11 @@ class Enemies {
 
     // POSITION AND DIMENSION
 
-    this.x = 440;
-    this.y = 525;
+    this.x = 1120;
+    this.y = 555;
     this.width = 40;
     this.height = 70;
-    // initial styles
+    // INITIAL STYLES
     this.node.style.width = `${this.width}px`;
     this.node.style.height = `${this.height}px`;
     this.node.style.backgroundColor = "pink";

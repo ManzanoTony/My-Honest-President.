@@ -7,9 +7,9 @@ const winScreenNode = document.querySelector("#winning-screen");
 const looseScreenNode = document.querySelector("#loosing-screen");
 const gameBoxNode = document.querySelector("#game-box");
 const timerDisplayNode = document.querySelector("#timer-display");
+const livesDisplayNode = document.querySelector("#lives-display");
 const tryAgainBtn1Node = document.querySelector("#try-again1");
 const tryAgainBtn2Node = document.querySelector("#try-again2");
-
 
 // GLOBAL GAME VARIABLES
 
@@ -23,8 +23,6 @@ let timerIntervalId = null;
 
 // GLOBAL GAME FUNCTIONS
 
-// TIMER
-
 function triggerWin() {
   clearInterval(timerIntervalId);
   clearInterval(gameIntervalId);
@@ -32,6 +30,15 @@ function triggerWin() {
 
   gameScreenNode.style.display = "none";
   winScreenNode.style.display = "block";
+}
+
+function triggerLoss() {
+  clearInterval(timerIntervalId);
+  clearInterval(gameIntervalId);
+  clearInterval(enemySpawnIntervalId);
+
+  gameScreenNode.style.display = "none";
+  looseScreenNode.style.display = "block";
 }
 
 function updateTimer() {
@@ -51,12 +58,17 @@ function updateTimer() {
   }
 }
 
+function updateLivesDisplay() {
+  if (!playerObj) return;
+  let moneyIcons = "💵 ".repeat(playerObj.lives);
+  livesDisplayNode.innerText = `Lives: ${moneyIcons}`;
+}
+
 function gameStart() {
   clearInterval(gameIntervalId);
   clearInterval(enemySpawnIntervalId);
   clearInterval(timerIntervalId);
 
-  // Clear old objects if any exist
   if (playerObj) {
     playerObj.node.remove();
     playerObj = null;
@@ -68,14 +80,16 @@ function gameStart() {
   bulletsArr.forEach((bullet) => bullet.node.remove());
   bulletsArr = [];
 
-  // Reset timer value on start
   timeLeft = 120;
   timerDisplayNode.innerText = "Time: 02:00";
 
   startScreenNode.style.display = "none";
+  winScreenNode.style.display = "none";
+  looseScreenNode.style.display = "none";
   gameScreenNode.style.display = "flex";
 
   addPlayer();
+  updateLivesDisplay();
   addEnemy();
 
   gameIntervalId = setInterval(gameLoop, Math.round(1000 / 60));
@@ -83,20 +97,35 @@ function gameStart() {
   timerIntervalId = setInterval(updateTimer, 1000);
 }
 
+function restartGame() {
+  clearInterval(timerIntervalId);
+  clearInterval(gameIntervalId);
+  clearInterval(enemySpawnIntervalId);
 
-// MAIN GAME INTERVAL
+  if (playerObj) {
+    playerObj.node.remove();
+    playerObj = null;
+  }
 
-setInterval(gameLoop, Math.round(1000 / 60));
+  enemiesArr.forEach((enemy) => enemy.node.remove());
+  enemiesArr = [];
 
-// STARTING OTHER INTERVALS
+  bulletsArr.forEach((bullet) => bullet.node.remove());
+  bulletsArr = [];
 
+  timeLeft = 120;
+  timerDisplayNode.innerText = "Time: 02:00";
+
+  winScreenNode.style.display = "none";
+  looseScreenNode.style.display = "none";
+  startScreenNode.style.display = "block";
+}
 
 function gameLoop() {
   enemiesArr.forEach((enemy) => {
     enemy.automaticMovement();
   });
 
-  // MOVE BULLETS FORWARD
   bulletsArr.forEach((bullet) => {
     bullet.moveForward();
   });
@@ -108,7 +137,7 @@ function gameLoop() {
 }
 
 function checkBulletDespawn() {
-  if (bulletsArr[0] && bulletsArr[0].x > 800) {
+  if (bulletsArr[0] && bulletsArr[0].x > 1120) {
     bulletsArr[0].node.remove();
     bulletsArr.shift();
   }
@@ -118,11 +147,9 @@ function checkBulletEnemyCollision() {
   bulletsArr.forEach((bullet, bIndex) => {
     enemiesArr.forEach((enemy, eIndex) => {
       if (checkCollision(bullet, enemy)) {
-        // Remove bullet
         bullet.node.remove();
         bulletsArr.splice(bIndex, 1);
 
-        // One-hit knockout on enemy!
         enemy.node.remove();
         enemiesArr.splice(eIndex, 1);
       }
@@ -130,17 +157,14 @@ function checkBulletEnemyCollision() {
   });
 }
 
-// CHARACTER FUNTIONS
-
 function addPlayer() {
   playerObj = new Player();
 }
 
 function addEnemy() {
-  let randomSpeed = Math.floor(Math.random() * 10) + 3;
+  let randomSpeed = Math.floor(Math.random() * 15) + 5;
   let newEnemy = new Enemies(randomSpeed);
   enemiesArr.push(newEnemy);
-  console.log(enemiesArr.length);
 }
 
 function checkEnemyDespawn() {
@@ -160,9 +184,29 @@ function checkCollision(element1, element2) {
 }
 
 function checkCollisionPlayerEnemy() {
-  enemiesArr.forEach((enemy) => {
-    if (checkCollision(enemy, playerObj)) {
-      console.log(" You lost money");
+  if (!playerObj) return;
+
+  enemiesArr.forEach((enemy, index) => {
+    if (!playerObj.isImmune && checkCollision(enemy, playerObj)) {
+      playerObj.lives--;
+      updateLivesDisplay();
+
+      enemy.node.remove();
+      enemiesArr.splice(index, 1);
+
+      playerObj.isImmune = true;
+      playerObj.node.style.opacity = "0.5";
+
+      setTimeout(() => {
+        if (playerObj) {
+          playerObj.isImmune = false;
+          playerObj.node.style.opacity = "1";
+        }
+      }, 1000);
+
+      if (playerObj.lives <= 0) {
+        triggerLoss();
+      }
     }
   });
 }
@@ -175,18 +219,11 @@ characterSelectionNode.addEventListener("click", (event) => {
   }
 });
 
-// TRY AGAIN BUTTONS
-tryAgainBtn1Node.addEventListener("click", () => {
-  winScreenNode.style.display = "none";
-  startScreenNode.style.display = "block";
-});
+tryAgainBtn1Node.addEventListener("click", restartGame);
+tryAgainBtn2Node.addEventListener("click", restartGame);
 
-tryAgainBtn2Node.addEventListener("click", () => {
-  looseScreenNode.style.display = "none";
-  startScreenNode.style.display = "block";
-});
+// MONEY SHOTTING (Right Arrow Key)
 
-// SHOOTING CONTROLS (Right Arrow)
 window.addEventListener("keydown", (event) => {
   if (event.code === "ArrowRight") {
     if (playerObj) {
@@ -195,22 +232,30 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
-// JUMP CONTROLS (Spacebar)
+// JUMP CONTROLS (Space bar)
+
 window.addEventListener("keyup", (event) => {
   if (event.code === "Space") {
-    let jumpUp = setInterval(() => {
-      playerObj.moveUp();
-    }, 20);
+    if (playerObj && !playerObj.isJumping) {
+      playerObj.isJumping = true;
 
-    setTimeout(() => {
-      clearInterval(jumpUp);
-      let jumpDown = setInterval(() => {
-        playerObj.moveDown();
+      let jumpUp = setInterval(() => {
+        playerObj.moveUp();
       }, 20);
+
       setTimeout(() => {
-        clearInterval(jumpDown);
+        clearInterval(jumpUp);
+        let jumpDown = setInterval(() => {
+          playerObj.moveDown();
+        }, 20);
+
+        setTimeout(() => {
+          clearInterval(jumpDown);
+          playerObj.y = 545;
+          playerObj.node.style.top = `${playerObj.y}px`;
+          playerObj.isJumping = false;
+        }, 300);
       }, 300);
-    }, 300);
+    }
   }
 });
-
