@@ -168,26 +168,42 @@ function addEnemy() {
 }
 
 function checkEnemyDespawn() {
-  if (enemiesArr[0] && enemiesArr[0].x < -20) {
+  // Wait until the enemy's RIGHT edge (x + width) moves completely off screen (< 0)
+  if (enemiesArr[0] && (enemiesArr[0].x + enemiesArr[0].width) < 0) {
     enemiesArr[0].node.remove();
     enemiesArr.shift();
   }
 }
 
+
 function checkCollision(element1, element2) {
+  // Inset padding makes the hit boxes smaller and tighter around the actual sprites
+  let padding = 50; 
+
   return (
-    element1.x < element2.x + element2.width &&
-    element1.x + element1.width > element2.x &&
-    element1.y < element2.y + element2.height &&
-    element1.y + element1.height > element2.y
+    element1.x + padding < element2.x + element2.width - padding &&
+    element1.x + element1.width - padding > element2.x + padding &&
+    element1.y + padding < element2.y + element2.height - padding &&
+    element1.y + element1.height - padding > element2.y + padding
   );
 }
+
+function checkPaddedCollision(element1, element2, padding) {
+  return (
+    element1.x + padding < element2.x + element2.width - padding &&
+    element1.x + element1.width - padding > element2.x + padding &&
+    element1.y + padding < element2.y + element2.height - padding &&
+    element1.y + element1.height - padding > element2.y + padding
+  );
+}
+
 
 function checkCollisionPlayerEnemy() {
   if (!playerObj) return;
 
   enemiesArr.forEach((enemy, index) => {
-    if (!playerObj.isImmune && checkCollision(enemy, playerObj)) {
+    // 55px padding shrinks the hitboxes to fit their actual visible bodies
+    if (!playerObj.isImmune && checkPaddedCollision(enemy, playerObj, 55)) {
       playerObj.lives--;
       updateLivesDisplay();
 
@@ -211,6 +227,9 @@ function checkCollisionPlayerEnemy() {
   });
 }
 
+
+
+
 // EVENT LISTENERS
 
 characterSelectionNode.addEventListener("click", (event) => {
@@ -232,6 +251,9 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
+
+
+
 // JUMP CONTROLS (Space bar)
 
 window.addEventListener("keyup", (event) => {
@@ -239,23 +261,37 @@ window.addEventListener("keyup", (event) => {
     if (playerObj && !playerObj.isJumping) {
       playerObj.isJumping = true;
 
+      // 1. Move up high into the air
       let jumpUp = setInterval(() => {
         playerObj.moveUp();
-      }, 20);
+      }, 18);
 
       setTimeout(() => {
         clearInterval(jumpUp);
-        let jumpDown = setInterval(() => {
-          playerObj.moveDown();
-        }, 20);
-
+        
+        // 2. SHORTENED AIR-TIME: Floating delay reduced from 200ms to 100ms
         setTimeout(() => {
-          clearInterval(jumpDown);
-          playerObj.y = 545;
-          playerObj.node.style.top = `${playerObj.y}px`;
-          playerObj.isJumping = false;
-        }, 300);
-      }, 300);
+
+          // 3. Move down back to the ground
+          let jumpDown = setInterval(() => {
+            playerObj.moveDown();
+          }, 18);
+
+          setTimeout(() => {
+            clearInterval(jumpDown);
+            
+            // 4. Reset securely back to ground position
+            playerObj.y = 340;
+            playerObj.node.style.top = `${playerObj.y}px`;
+            playerObj.isJumping = false;
+          }, 450); // Fall duration
+
+        }, 100); // <-- Reduced air-time to 100ms
+
+      }, 450); // Rise duration
     }
   }
 });
+
+
+

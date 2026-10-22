@@ -5,9 +5,9 @@ class Player {
     this.node.className = "player";
 
     this.x = 75;
-    this.y = 545;
-    this.width = 50;
-    this.height = 80;
+    this.y = 340;        // Ground level for large size
+    this.width = 200;    // Large width
+    this.height = 300;   // Large height
 
     this.isJumping = false;
     this.lives = 3;
@@ -15,9 +15,6 @@ class Player {
 
     this.node.style.width = `${this.width}px`;
     this.node.style.height = `${this.height}px`;
-    this.node.style.backgroundColor = "orange";
-    this.node.style.border = "solid yellow 2px";
-    this.node.style.borderRadius = "5px";
 
     this.node.style.position = "absolute";
     this.node.style.top = `${this.y}px`;
@@ -32,6 +29,13 @@ class Player {
 
   moveDown() {
     this.y += 13;
+
+    // Stop falling at ground level (340)
+    if (this.y >= 340) {
+      this.y = 340;
+      this.isJumping = false;
+    }
+
     this.node.style.top = `${this.y}px`;
   }
 
@@ -40,6 +44,8 @@ class Player {
     bulletsArr.push(newBullet);
   }
 }
+
+
 
 class Bullet {
   constructor(playerX, playerY) {

@@ -15,7 +15,8 @@ body {
 /* ==========================================
    2. SCREEN MANAGEMENT & CENTERING
    ========================================== */
-#winning-screen, #loosing-screen {
+#winning-screen,
+#loosing-screen {
   display: none;
   text-align: center;
   color: #ffffff;
@@ -37,10 +38,10 @@ body {
    3. GAME BOX & SLIDING BACKGROUND
    ========================================== */
 #game-box {
-  position: relative; 
-  width: 1120px;        
-  height: 630px;      
-  overflow: hidden; 
+  position: relative;
+  width: 1120px;
+  height: 630px;
+  overflow: hidden;
   border: none;
   border-radius: 8px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
@@ -59,10 +60,9 @@ body {
   z-index: 1;
 }
 
-
 #city-slider img {
-  height: 100%; 
-  width: auto;  
+  height: 100%;
+  width: auto;
   display: block;
 }
 
@@ -72,7 +72,9 @@ body {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%); /* Slides past first image; second image loops seamlessly */
+    transform: translateX(
+      -50%
+    ); /* Slides past first image; second image loops seamlessly */
   }
 }
 
@@ -82,7 +84,7 @@ body {
 #timer-display {
   position: absolute;
   top: 15px;
-  right: 25px; 
+  right: 25px;
   font-size: 26px;
   font-weight: bold;
   color: #ffffff;
@@ -93,7 +95,7 @@ body {
 #lives-display {
   position: absolute;
   top: 15px;
-  left: 25px; 
+  left: 25px;
   font-size: 22px;
   font-weight: bold;
   color: #ffffff;
@@ -108,14 +110,27 @@ body {
   position: absolute;
   width: 28px;
   height: 16px;
-  background-color: #ffd700; 
-  border: 2px solid #006600;  
+  background-color: #ffd700;
+  border: 2px solid #006600;
   border-radius: 3px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   z-index: 15;
 }
 
-.player, .enemy {
+.player {
   position: absolute;
-  z-index: 15; /* Renders in front of the background slider */
+  z-index: 15;
+  background-image: url("../images/trump/trump-runing.gif");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
 }
+
+.enemy {
+  position: absolute;
+  z-index: 15;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
+}
+
