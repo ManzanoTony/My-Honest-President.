@@ -11,6 +11,103 @@ const livesDisplayNode = document.querySelector("#lives-display");
 const tryAgainBtn1Node = document.querySelector("#try-again1");
 const tryAgainBtn2Node = document.querySelector("#try-again2");
 
+// AUDIO TRACKS & MUSIC MANAGEMENT
+
+const selectScreenMusic = new Audio("Sound/select-screen.mp3");
+selectScreenMusic.loop = true;
+selectScreenMusic.volume = 0.1;
+
+let currentBgMusic = null;    // Selection / Main Gameplay loop
+let currentEndBgMusic = null; // Win/Loss background track
+let currentVoiceLine = null;  // Win/Loss president voice line track
+
+function playSelectScreenMusic() {
+  stopAllAudio();
+  selectScreenMusic.currentTime = 0;
+  selectScreenMusic.play().catch((err) => console.log("Select screen music play error:", err));
+}
+
+function stopSelectScreenMusic() {
+  selectScreenMusic.pause();
+  selectScreenMusic.currentTime = 0;
+}
+
+function playBackgroundMusic(audioPath) {
+  stopAllAudio(); // Clear all audio before starting a new track
+
+  currentBgMusic = new Audio(audioPath);
+  currentBgMusic.loop = true;
+  currentBgMusic.volume = 0.1;
+  currentBgMusic.play().catch((err) => console.log("Audio play error:", err));
+}
+
+function playEndScreenAudio(voicePath, bgMusicPath) {
+  stopAllAudio(); // Clear gameplay music completely
+
+  if (voicePath) {
+    currentVoiceLine = new Audio(voicePath);
+    currentVoiceLine.volume = 0.8;
+    currentVoiceLine.play().catch((err) => console.log("Voice line audio error:", err));
+  }
+
+  if (bgMusicPath) {
+    currentEndBgMusic = new Audio(bgMusicPath);
+    currentEndBgMusic.loop = true;
+    currentEndBgMusic.volume = 0.1;
+    currentEndBgMusic.play().catch((err) => console.log("End background audio error:", err));
+  }
+}
+
+function playHitSound() {
+  let hitSound = null;
+
+  if (selectedPresidentKey === "trump") {
+    hitSound = new Audio("Sound/ouch-hit-trump.mp3");
+  } else if (selectedPresidentKey === "putin") {
+    hitSound = new Audio("Sound/putin-ouch.mp3");
+  }
+
+  if (hitSound) {
+    hitSound.currentTime = 0; // Rewind so hits play cleanly
+    hitSound.volume = 0.8;
+    hitSound.play().catch((err) => console.log("Hit sound audio error:", err));
+  }
+}
+
+function playMoneySound() {
+  const moneySound = new Audio("Sound/money-sound.mp3");
+  moneySound.currentTime = 0;
+  moneySound.volume = 0.2;
+  moneySound.play().catch((err) => console.log("Money sound audio error:", err));
+}
+
+function playJumpSound() {
+  const jumpSound = new Audio("Sound/jump-sound.mp3");
+  jumpSound.currentTime = 0;
+  jumpSound.volume = 0.5;
+  jumpSound.play().catch((err) => console.log("Jump sound audio error:", err));
+}
+
+function stopAllAudio() {
+  stopSelectScreenMusic();
+
+  if (currentBgMusic) {
+    currentBgMusic.pause();
+    currentBgMusic.currentTime = 0;
+    currentBgMusic = null;
+  }
+  if (currentEndBgMusic) {
+    currentEndBgMusic.pause();
+    currentEndBgMusic.currentTime = 0;
+    currentEndBgMusic = null;
+  }
+  if (currentVoiceLine) {
+    currentVoiceLine.pause();
+    currentVoiceLine.currentTime = 0;
+    currentVoiceLine = null;
+  }
+}
+
 // GLOBAL GAME VARIABLES
 
 let playerObj = null;
@@ -21,7 +118,7 @@ let gameIntervalId = null;
 let enemySpawnIntervalId = null;
 let timerIntervalId = null;
 let canShoot = true;
-let selectedPresidentKey = null; // Stores "trump" or "putin"
+let selectedPresidentKey = null; 
 
 // GLOBAL GAME FUNCTIONS
 
@@ -31,7 +128,19 @@ function triggerWin() {
   clearInterval(enemySpawnIntervalId);
 
   gameScreenNode.style.display = "none";
-  winScreenNode.style.display = "block";
+  winScreenNode.style.display = "flex";
+
+  const winningImgNode = document.querySelector("#winning-president-img");
+
+  if (selectedPresidentKey === "trump") {
+    if (winningImgNode) winningImgNode.src = "images/trump/trump-winning.gif";
+    // Plays Trump Win track and Trump Wins Background
+    playEndScreenAudio("Sound/trump-win.mp3", "Sound/trump-wins-background.mp3");
+  } else if (selectedPresidentKey === "putin") {
+    if (winningImgNode) winningImgNode.src = "images/putin/putin-win.gif";
+    // Plays Putin Win track and Putin Win Background
+    playEndScreenAudio("Sound/putin-win.mp3", "Sound/putin-win-backgroud.mp3");
+  }
 }
 
 function triggerLoss() {
@@ -40,7 +149,19 @@ function triggerLoss() {
   clearInterval(enemySpawnIntervalId);
 
   gameScreenNode.style.display = "none";
-  looseScreenNode.style.display = "block";
+  looseScreenNode.style.display = "flex";
+
+  const losingImgNode = document.querySelector("#losing-president-img");
+
+  if (selectedPresidentKey === "trump") {
+    if (losingImgNode) losingImgNode.src = "images/trump/trump-angry.gif";
+    // Plays Trump Lose track and Lose Screen Background
+    playEndScreenAudio("Sound/trump-loose.mp3", "Sound/loose-screen.mp3");
+  } else if (selectedPresidentKey === "putin") {
+    if (losingImgNode) losingImgNode.src = "images/putin/putin-loosing.gif";
+    // Plays Putin Lose track and Lose Screen Background
+    playEndScreenAudio("Sound/putin-loose.mp3", "Sound/loose-screen.mp3");
+  }
 }
 
 function updateTimer() {
@@ -71,6 +192,9 @@ function gameStart() {
   clearInterval(enemySpawnIntervalId);
   clearInterval(timerIntervalId);
 
+  // Stop start screen music when character is chosen
+  stopSelectScreenMusic();
+
   if (playerObj) {
     playerObj.node.remove();
     playerObj = null;
@@ -90,6 +214,13 @@ function gameStart() {
   looseScreenNode.style.display = "none";
   gameScreenNode.style.display = "flex";
 
+  // Start background selection audio during play
+  if (selectedPresidentKey === "trump") {
+    playBackgroundMusic("Sound/trump-select.mp3");
+  } else if (selectedPresidentKey === "putin") {
+    playBackgroundMusic("Sound/putin-select.mp3");
+  }
+
   addPlayer();
   updateLivesDisplay();
   addEnemy();
@@ -103,6 +234,9 @@ function restartGame() {
   clearInterval(timerIntervalId);
   clearInterval(gameIntervalId);
   clearInterval(enemySpawnIntervalId);
+
+  // Stop all active game/end screen sounds and restart start screen music
+  playSelectScreenMusic();
 
   if (playerObj) {
     playerObj.node.remove();
@@ -120,7 +254,7 @@ function restartGame() {
 
   winScreenNode.style.display = "none";
   looseScreenNode.style.display = "none";
-  startScreenNode.style.display = "block";
+  startScreenNode.style.display = "flex";
 }
 
 function gameLoop() {
@@ -165,7 +299,6 @@ function checkBulletEnemyCollision() {
   });
 }
 
-// FIXED: Spawns the correct president using the config object
 function addPlayer() {
   if (!selectedPresidentKey) return;
   const chosenConfig = PRESIDENTS[selectedPresidentKey];
@@ -202,6 +335,9 @@ function checkCollisionPlayerEnemy() {
       playerObj.lives--;
       updateLivesDisplay();
 
+      // Trigger character-specific hit sound effect
+      playHitSound();
+
       enemy.node.remove();
       enemiesArr.splice(index, 1);
 
@@ -224,7 +360,31 @@ function checkCollisionPlayerEnemy() {
 
 // EVENT LISTENERS
 
-// FIXED: Character selection listener tracks Trump vs Putin explicitly
+// Function to start the selection screen music
+function tryStartSelectMusic() {
+  if (startScreenNode.style.display !== "none" && !selectedPresidentKey) {
+    playSelectScreenMusic();
+  }
+}
+
+// Plays music when the select-screen is loaded
+window.addEventListener("DOMContentLoaded", () => {
+  tryStartSelectMusic();
+});
+
+// Fallback: If autoplay is blocked by browser policy, play on the first user interaction
+window.addEventListener("click", function handleFirstInteraction() {
+  if (!selectScreenMusic.paused) return; 
+  tryStartSelectMusic();
+  window.removeEventListener("click", handleFirstInteraction);
+});
+
+window.addEventListener("keydown", function handleFirstKeyInteraction() {
+  if (!selectScreenMusic.paused) return; 
+  tryStartSelectMusic();
+  window.removeEventListener("keydown", handleFirstKeyInteraction);
+});
+
 characterSelectionNode.addEventListener("click", (event) => {
   const clickedBtn = event.target.closest("button");
   if (clickedBtn) {
@@ -247,6 +407,7 @@ window.addEventListener("keydown", (event) => {
   if (event.code === "ArrowRight") {
     if (playerObj && canShoot) {
       playerObj.shoot();
+      playMoneySound();
       canShoot = false;
 
       setTimeout(() => {
@@ -262,7 +423,8 @@ window.addEventListener("keyup", (event) => {
   if (event.code === "Space") {
     if (playerObj && !playerObj.isJumping) {
       playerObj.isJumping = true;
-      playerObj.setJumpingImage(); // Dynamically uses active president's jump GIF
+      playerObj.setJumpingImage();
+      playJumpSound();
 
       let jumpUp = setInterval(() => {
         playerObj.moveUp();
@@ -282,7 +444,7 @@ window.addEventListener("keyup", (event) => {
             playerObj.y = 340;
             playerObj.node.style.top = `${playerObj.y}px`;
             playerObj.isJumping = false;
-            playerObj.setRunningImage(); // Dynamically returns to running GIF
+            playerObj.setRunningImage();
 
           }, 450);
         }, 100);

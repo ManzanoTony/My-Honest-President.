@@ -14,7 +14,7 @@ const PRESIDENTS = {
 
 class Player {
   constructor(characterData) {
-    this.character = characterData; // Holds the active president's config data
+    this.character = characterData; 
 
     this.node = document.createElement("div");
     gameBoxNode.append(this.node);
@@ -27,8 +27,6 @@ class Player {
     this.lives = 3;
     this.isJumping = false;
     this.isImmune = false;
-
-    // Apply base styles and start with the running animation
     this.node.style.width = `${this.width}px`;
     this.node.style.height = `${this.height}px`;
     this.node.style.position = "absolute";
@@ -39,7 +37,7 @@ class Player {
     this.node.style.backgroundRepeat = "no-repeat";
   }
 
-  // --- THE 3 CORE ANIMATION STATES ---
+  // ANIMATION STATES 
   setRunningImage() {
     this.node.style.backgroundImage = `url('${this.character.runningGif}')`;
   }
@@ -51,7 +49,7 @@ class Player {
   setShootingImage() {
     this.node.style.backgroundImage = `url('${this.character.shootingGif}')`;
   }
-  // ------------------------------------
+
 
   moveUp() {
     this.y -= 18;
@@ -69,24 +67,26 @@ class Player {
   }
 
   shoot() {
-    // 1. Temporarily set the shooting sprite
+    //  Temporarily set the shooting sprite
     this.setShootingImage();
 
-    // 2. Spawn the money projectile from hand/chest height
+    //  Spawn the money projectile from hand/chest height
     let bulletX = this.x + 150; 
     let bulletY = this.y + 190; 
     
     let newBullet = new Bullet(bulletX, bulletY);
     bulletsArr.push(newBullet);
 
-    // 3. Revert back to running sprite after 300ms (unless jumping)
+    // Revert back to running sprite after 300ms (unless jumping)
     setTimeout(() => {
       if (playerObj && !playerObj.isJumping) {
         this.setRunningImage();
       }
     }, 300);
   }
-} // <-- ADDED MISSING CLOSING BRACE FOR PLAYER CLASS
+} 
+
+// BULLETS
 
 class Bullet {
   constructor(x, y) {

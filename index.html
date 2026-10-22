@@ -7,34 +7,32 @@
     <link rel="stylesheet" href="./styles/style.css" />
   </head>
   <body>
+    <!-- Start screen -->
     <div id="start-screen">
       <h1>My Hone$t Pre$ident</h1>
 
       <p>
-        Make true or false promises to your citizens so you can get the most
-        money in the end! Use the Spacebar to jump and the Right Arrow key to
-        shoot. Good luck with your promises!
+        Make true or false promises to your citizens so you can become a
+        billionaire! Use the Spacebar to jump and the Right Arrow key to shoot
+        (you can only shoot every 2 seconds). Good luck with your promises!
       </p>
 
-      <p>Click on your favorite pre$ident to vote for them.</p>
+      <h2>Select Your President</h2>
 
       <div class="character-selection">
-  <h2>Select Your President</h2>
-  
-  <!-- Button 1: Trump -->
-  <button id="trump-btn" class="president-card">
-    <img src="images/trump/trump-select.gif" alt="Trump" />
-    <span>Donald Trump</span>
-  </button>
+        <!-- Button 1: Trump -->
+        <button id="trump-btn" class="president-card">
+          <img src="images/trump/trump-select.gif" alt="Trump" />
+          <span>Donald Trump</span>
+        </button>
 
-  <!-- Button 2: Putin -->
-  <button id="putin-btn" class="president-card">
-    <img src="images/putin/putin-select.gif" alt="Putin" />
-    <span>Vladimir Putin</span>
-  </button>
-</div>
-</div>
-
+        <!-- Button 2: Putin -->
+        <button id="putin-btn" class="president-card">
+          <img src="images/putin/putin-select.gif" alt="Putin" />
+          <span>Vladimir Putin</span>
+        </button>
+      </div>
+    </div>
 
     <!-- Main game screen -->
     <div id="main-game-screen">
@@ -54,6 +52,11 @@
     <!-- Winning screen -->
     <div id="winning-screen">
       <h2>Your promises were believed! You are now a billionaire!</h2>
+
+      <div class="end-screen-image-container">
+        <img id="winning-president-img" src="" alt="President Winning" />
+      </div>
+
       <div id="restart-game1">
         <button id="try-again1">Try Again</button>
       </div>
@@ -62,6 +65,11 @@
     <!-- Losing screen -->
     <div id="loosing-screen">
       <h2>Your promises were not believed—you are going to jail!</h2>
+
+      <div class="end-screen-image-container">
+        <img id="losing-president-img" src="" alt="President Losing" />
+      </div>
+
       <div id="restart-game2">
         <button id="try-again2">Try Again</button>
       </div>

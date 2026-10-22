@@ -5,8 +5,8 @@ class Enemies {
     this.node.className = "enemy";
 
     this.x = 1120;
-    this.y = 340;     
-    this.width = 200; 
+    this.y = 340;
+    this.width = 200;
     this.height = 300;
 
     const enemyImages = [
@@ -15,7 +15,7 @@ class Enemies {
       "hijab-woman.gif",
       "skate-man.gif",
       "woke-man.gif",
-      "woke-woman.gif"
+      "woke-woman.gif",
     ];
 
     let randomIndex = Math.floor(Math.random() * enemyImages.length);
@@ -23,8 +23,6 @@ class Enemies {
 
     this.node.style.width = `${this.width}px`;
     this.node.style.height = `${this.height}px`;
-
-    // Fixed path for JavaScript inline styles (relative to index.html root)
     this.node.style.backgroundImage = `url('images/enemies/${chosenImage}')`;
     this.node.style.backgroundSize = "contain";
     this.node.style.backgroundRepeat = "no-repeat";
