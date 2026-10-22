@@ -1,73 +1,119 @@
+// CONFIGURATION FOR BOTH PRESIDENTS (Running, Jumping, Shooting)
+const PRESIDENTS = {
+  trump: {
+    runningGif: "images/trump/trump-runing.gif",
+    jumpingGif: "images/trump/trump-jumping.gif",
+    shootingGif: "images/trump/trump-shoot.gif"
+  },
+  putin: {
+    runningGif: "images/putin/putin-runing.gif",
+    jumpingGif: "images/putin/putin-jumping.gif",
+    shootingGif: "images/putin/putin-shoot.gif"
+  }
+};
+
 class Player {
-  constructor() {
+  constructor(characterData) {
+    this.character = characterData; // Holds the active president's config data
+
     this.node = document.createElement("div");
     gameBoxNode.append(this.node);
     this.node.className = "player";
 
-    this.x = 75;
-    this.y = 340;        // Ground level for large size
-    this.width = 200;    // Large width
-    this.height = 300;   // Large height
-
-    this.isJumping = false;
+    this.x = 100;
+    this.y = 340;
+    this.width = 200;
+    this.height = 300;
     this.lives = 3;
-    this.isImmune = false; 
+    this.isJumping = false;
+    this.isImmune = false;
 
+    // Apply base styles and start with the running animation
     this.node.style.width = `${this.width}px`;
     this.node.style.height = `${this.height}px`;
-
     this.node.style.position = "absolute";
     this.node.style.top = `${this.y}px`;
     this.node.style.left = `${this.x}px`;
-    this.speed = 150;
+    this.setRunningImage();
+    this.node.style.backgroundSize = "contain";
+    this.node.style.backgroundRepeat = "no-repeat";
   }
 
+  // --- THE 3 CORE ANIMATION STATES ---
+  setRunningImage() {
+    this.node.style.backgroundImage = `url('${this.character.runningGif}')`;
+  }
+
+  setJumpingImage() {
+    this.node.style.backgroundImage = `url('${this.character.jumpingGif}')`;
+  }
+
+  setShootingImage() {
+    this.node.style.backgroundImage = `url('${this.character.shootingGif}')`;
+  }
+  // ------------------------------------
+
   moveUp() {
-    this.y -= 13;
+    this.y -= 18;
     this.node.style.top = `${this.y}px`;
   }
 
   moveDown() {
-    this.y += 13;
-
-    // Stop falling at ground level (340)
+    this.y += 18;
     if (this.y >= 340) {
       this.y = 340;
       this.isJumping = false;
+      this.setRunningImage(); // Return to running when landing
     }
-
     this.node.style.top = `${this.y}px`;
   }
 
   shoot() {
-    let newBullet = new Bullet(this.x, this.y);
+    // 1. Temporarily set the shooting sprite
+    this.setShootingImage();
+
+    // 2. Spawn the money projectile from hand/chest height
+    let bulletX = this.x + 150; 
+    let bulletY = this.y + 190; 
+    
+    let newBullet = new Bullet(bulletX, bulletY);
     bulletsArr.push(newBullet);
+
+    // 3. Revert back to running sprite after 300ms (unless jumping)
+    setTimeout(() => {
+      if (playerObj && !playerObj.isJumping) {
+        this.setRunningImage();
+      }
+    }, 300);
   }
-}
-
-
+} // <-- ADDED MISSING CLOSING BRACE FOR PLAYER CLASS
 
 class Bullet {
-  constructor(playerX, playerY) {
-    this.width = 25;
-    this.height = 15;
-    this.x = playerX + 50; 
-    this.y = playerY + 30; 
-
+  constructor(x, y) {
     this.node = document.createElement("div");
-    this.node.className = "money-bullet"; 
+    
+    const gameBox = document.querySelector("#game-box");
+    if (gameBox) {
+      gameBox.append(this.node);
+    }
 
-    gameBoxNode.append(this.node);
-    this.updatePosition();
+    this.node.className = "bullet";
+
+    this.x = x;
+    this.y = y;
+    this.width = 60;
+    this.height = 40;
+    this.speed = 5;
+
+    this.node.style.width = `${this.width}px`;
+    this.node.style.height = `${this.height}px`;
+    this.node.style.position = "absolute";
+    this.node.style.left = `${this.x}px`;
+    this.node.style.top = `${this.y}px`;
   }
 
   moveForward() {
-    this.x += 8; 
-    this.updatePosition();
-  }
-
-  updatePosition() {
+    this.x += this.speed;
     this.node.style.left = `${this.x}px`;
-    this.node.style.top = `${this.y}px`;
   }
 }
