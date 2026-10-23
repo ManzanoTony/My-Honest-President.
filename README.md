@@ -45,6 +45,10 @@ AI use:
 
 ---
 
+## Music: 
+
+* YouTube 8-bit versions of various songs. 
+
 ## 📂 Project Structure
 
 ```text
